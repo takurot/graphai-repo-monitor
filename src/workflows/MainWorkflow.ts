@@ -4,7 +4,7 @@ import { ImprovementAgent } from '../agents/ImprovementAgent';
 
 export async function mainWorkflow() {
   try {
-    const fetchAgent = new FetchAgent();
+    const fetchAgent = new FetchAgent(); // 引数不要
     const nodes = await fetchAgent.collectData();
 
     const lintAgent = new LintAgent(nodes);
@@ -23,6 +23,10 @@ export async function mainWorkflow() {
       console.log('-----');
     }
   } catch (error) {
-    console.error('Error in main workflow:', error.message);
+    if (error instanceof Error) {
+      console.error('Error in main workflow:', error.message);
+    } else {
+      console.error('Error in main workflow:', error);
+    }
   }
 }

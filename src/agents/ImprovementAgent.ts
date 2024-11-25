@@ -19,7 +19,7 @@ export class ImprovementAgent {
 
     for (const node of this.nodes) {
       const response = await this.openai.createChatCompletion({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',

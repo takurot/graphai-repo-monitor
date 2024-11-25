@@ -12,13 +12,12 @@ export class FetchAgent {
     if (!repos) {
       throw new Error('GITHUB_REPOS environment variable is not defined.');
     }
-    this.repoList = repos.split(','); // 環境変数からリポジトリリストを取得
+    this.repoList = repos.split(','); // .envからリポジトリリストを取得
   }
 
   async collectData(): Promise<RepositoryNode[]> {
-    const headers = {
-      Authorization: `token ${process.env.GITHUB_API_TOKEN}`, // GitHub API トークンを利用
-    };
+    const token = process.env.GITHUB_API_TOKEN || ''; // APIトークンを環境変数から取得（オプション）
+    const headers = token ? { Authorization: `token ${token}` } : {}; // トークンがあればヘッダーを設定
 
     const nodes: RepositoryNode[] = [];
     for (const repo of this.repoList) {
@@ -31,7 +30,11 @@ export class FetchAgent {
           lastCommitDate: data.pushed_at,
         });
       } catch (error) {
-        console.error(`Error fetching data for ${repo}: ${error.message}`);
+        if (error instanceof Error) {
+          console.error(`Error fetching data for ${repo}: ${error.message}`);
+        } else {
+          console.error(`Error fetching data for ${repo}:`, error);
+        }
       }
     }
     return nodes;
